@@ -22,6 +22,7 @@ pipeline {
                 label 'maven'
             }   
             steps {
+                sh "cd ${env.APP_NAME}"
                 sh "mvn -B clean test"
                 stash name: "unit_tests", includes: "target/surefire-reports/**"
             }
@@ -31,6 +32,7 @@ pipeline {
                 label 'maven'
             }
             steps {
+                sh "cd ${env.APP_NAME}"
                 sh "mvn -B clean verify -Dsurefire.skip=true"
                 stash name: 'it_tests', includes: 'target/failsafe-reports/**'
             }
