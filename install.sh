@@ -6,3 +6,6 @@ oc new-project sample-rest-app-dev
 oc new-project sample-rest-app-stg
 oc new-project sample-rest-app-prd
 
+oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n sample-rest-app-dev
+oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n sample-rest-app-stg
+oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n sample-rest-app-prd

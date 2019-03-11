@@ -26,7 +26,7 @@ pipeline {
             steps {
                 script {
                     sh "cd ${env.APP_NAME} && mvn -B clean test"
-                    stash name: "unit_tests", includes: "${env.APP_NAME}/target/surefire-reports/**"
+                    stash name: "unit_tests", includes: "${env.APP_NAME}/target/surefire-reports/**", allowEmpty: true
                 }
             }
         }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     sh "cd ${env.APP_NAME} && mvn -B clean verify -Dsurefire.skip=true"
-                    stash name: 'it_tests', includes: "${env.APP_NAME}/target/failsafe-reports/**"
+                    stash name: 'it_tests', includes: "${env.APP_NAME}/target/failsafe-reports/**", allowEmpty: true
                 }
             }
         }
