@@ -1,6 +1,6 @@
 ## CI/CD Sample for OpenShift with Jenkins
 
-This is a sample project that can be used in demos and/or as reference to build a CI/CD implementation using Jenkins and OpenShift to deploy a Spring Boot REST application. Use at your on discretion.
+This is a sample project that can be used in demos and/or as reference to build a CI/CD implementation using Jenkins and OpenShift to deploy a Spring Boot REST application. Use at your own discretion.
 
 ### How to use
 
