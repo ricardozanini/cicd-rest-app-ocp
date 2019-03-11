@@ -3,15 +3,6 @@ def appVersion = ""
 pipeline {
     agent any
     stages {
-        stage("Checkout") {
-            agent {
-                label 'maven'
-            }  
-            steps {
-                // build pipeline already have this repo configured
-                checkout scm
-            }
-        }
         stage("Build Aplication") {
             agent {
                 label 'maven'
@@ -19,7 +10,8 @@ pipeline {
             steps {
                 def pom = readMavenPom file: "${env.APP_NAME}/pom.xml"
                 appVersion = "${pom.version}-${env.BUILD_NUMBER}"
-                sh "mvn -B versions:set -DnewVersion=${appVersion}"
+                sh "cd ${env.APP_NAME}"
+                sh "mvn -B versions:set -DnewVersion=${appVersion/}"
                 sh "mvn -B -Dmaven.test.skip=true clean package"
                 sh "cp target/${env.APP_NAME}-${appVersion}.jar target/app.jar"
                 stash name: "artifact", includes: "target/app.jar"
