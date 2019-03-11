@@ -61,8 +61,10 @@ pipeline {
         }
         stage("Approval") {
             agent none
-            timeout(time:30, unit:'MINUTES') {
-                input 'Do I have your approval to promote this image to stage?'
+            steps {
+                timeout(time:30, unit:'MINUTES') {
+                    input 'Do I have your approval to promote this image to stage?' 
+                }
             }
         }
     }
