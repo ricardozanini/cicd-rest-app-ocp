@@ -8,7 +8,8 @@ pipeline {
                 label 'maven'
             }  
             steps {
-                git url "${env.GIT_REPOSITORY}", branch: "${env.GIT_BRANCH}"
+                // build pipeline already have this repo configured
+                checkout scm
             }
         }
         stage("Build Aplication") {

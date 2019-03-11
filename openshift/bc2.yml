@@ -1,0 +1,81 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "build.openshift.io/v1",
+            "kind": "BuildConfig",
+            "metadata": {
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewBuild"
+                },
+                "creationTimestamp": "2019-03-11T20:48:22Z",
+                "labels": {
+                    "build": "sample-rest-app-docker"
+                },
+                "name": "sample-rest-app-docker",
+                "namespace": "sample-rest-app-dev",
+                "resourceVersion": "729659",
+                "selfLink": "/apis/build.openshift.io/v1/namespaces/sample-rest-app-dev/buildconfigs/sample-rest-app-docker",
+                "uid": "0239059a-443f-11e9-92a4-5254004a9dda"
+            },
+            "spec": {
+                "failedBuildsHistoryLimit": 5,
+                "nodeSelector": null,
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "sample-rest-app-docker:latest"
+                    }
+                },
+                "postCommit": {},
+                "resources": {},
+                "runPolicy": "Serial",
+                "source": {
+                    "dockerfile": "FROM registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift\nCOPY app.jar /deployments/app.jar",
+                    "type": "Dockerfile"
+                },
+                "strategy": {
+                    "dockerStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "openjdk18-openshift:latest"
+                        }
+                    },
+                    "type": "Docker"
+                },
+                "successfulBuildsHistoryLimit": 5,
+                "triggers": [
+                    {
+                        "github": {
+                            "secret": "ygfHQSfXP_eeVmfTwg_A"
+                        },
+                        "type": "GitHub"
+                    },
+                    {
+                        "generic": {
+                            "secret": "OkgJGLpU6yQk9PGAyF8X"
+                        },
+                        "type": "Generic"
+                    },
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "imageChange": {
+                            "lastTriggeredImageID": "registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift@sha256:c2c501a49834d073a2ce2cc256952927e6cf1f0c27abb7d2fe63416022d16b44"
+                        },
+                        "type": "ImageChange"
+                    }
+                ]
+            },
+            "status": {
+                "lastVersion": 2
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}
