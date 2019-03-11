@@ -11,11 +11,11 @@ pipeline {
                 script {
                     def pom = readMavenPom file: "${env.APP_NAME}/pom.xml"
                     appVersion = "${pom.version}-${env.BUILD_NUMBER}"
-                    sh "cd ${env.APP_NAME}"
-                    sh "mvn -B versions:set -DnewVersion=${appVersion}"
-                    sh "mvn -B -Dmaven.test.skip=true clean package"
-                    sh "cp target/${env.APP_NAME}-${appVersion}.jar target/app.jar"
-                    stash name: "artifact", includes: "target/app.jar"
+                    print "Building app ${env.APP_NAME}, version ${appVersion}"
+                    sh "cd ${env.APP_NAME} && mvn -B versions:set -DnewVersion=${appVersion}"
+                    sh "cd ${env.APP_NAME} && mvn -B -Dmaven.test.skip=true clean package"
+                    sh "cp ${env.APP_NAME}/target/${env.APP_NAME}-${appVersion}.jar app.jar"
+                    stash name: "artifact", includes: "app.jar"
                 }
             }
         }
@@ -25,9 +25,8 @@ pipeline {
             }   
             steps {
                 script {
-                    sh "cd ${env.APP_NAME}"
-                    sh "mvn -B clean test"
-                    stash name: "unit_tests", includes: "target/surefire-reports/**"
+                    sh "cd ${env.APP_NAME} && mvn -B clean test"
+                    stash name: "unit_tests", includes: "${env.APP_NAME}/target/surefire-reports/**"
                 }
             }
         }
@@ -37,9 +36,8 @@ pipeline {
             }
             steps {
                 script {
-                    sh "cd ${env.APP_NAME}"
-                    sh "mvn -B clean verify -Dsurefire.skip=true"
-                    stash name: 'it_tests', includes: 'target/failsafe-reports/**'
+                    sh "cd ${env.APP_NAME} && mvn -B clean verify -Dsurefire.skip=true"
+                    stash name: 'it_tests', includes: "${env.APP_NAME}/target/failsafe-reports/**"
                 }
             }
         }
