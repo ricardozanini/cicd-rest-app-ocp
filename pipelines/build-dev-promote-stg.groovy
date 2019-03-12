@@ -45,7 +45,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject("${env.APP_NAME}-dev") {
+                        openshift.withProject("${env.PROJECT_NAME}-dev") {
                             timeout(time:20, unit:'MINUTES') {
                                 unstash name: "artifact"
                                 def buildSelector = openshift.selector("bc/${env.APP_NAME}-docker").startBuild("--from-file='app.jar'")

@@ -13,6 +13,13 @@
       "required": true
     },
     {
+      "name": "PROJECT_NAME",
+      "displayName": "Project Name",
+      "discription": "Name of the project where the application will reside.",
+      "value": "sample-rest-app",
+      "required": true
+    },
+    {
       "name": "TZ",
       "displayName": "Application Timezone",
       "discription": "Timezone for the application",
@@ -227,7 +234,8 @@
           "dockerStrategy": {
             "from": {
               "kind": "ImageStreamTag",
-              "name": "openjdk18-openshift:latest"
+              "name": "openjdk18-openshift:latest",
+              "namespace" : "openshift"
             }
           },
           "type": "Docker"
@@ -272,7 +280,8 @@
             "env": [
               { "name": "GIT_REPOSITORY", "value": "${GIT_REPOSITORY}" },
               { "name": "GIT_BRANCH", "value": "${GIT_BRANCH}" },
-              { "name": "APP_NAME", "value": "${NAME}" }
+              { "name": "APP_NAME", "value": "${NAME}" },
+              { "name": "PROJECT_NAME", "value": "${PROJECT_NAME}" }
             ]
           }
         },
