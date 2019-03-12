@@ -13,3 +13,6 @@ oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n sample-res
 # for image pulling
 oc adm policy add-cluster-role-to-user system:image-puller system:serviceaccount:cicd:jenkins
 oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:cicd:jenkins
+
+# trigger different deployments
+oc set triggers dc/sample-rest-app --from-image=sample-rest-app:<version> -c sample-rest-app
