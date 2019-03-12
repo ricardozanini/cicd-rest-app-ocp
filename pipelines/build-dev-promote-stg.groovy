@@ -51,6 +51,7 @@ pipeline {
                                 def buildSelector = openshift.selector("bc/${env.APP_NAME}-docker").startBuild("--from-file='app.jar'")
                                 //todo: throw expcetion if doesn't exist
                                 buildSelector.logs("-f")        
+                                openshift.tag("--source=docker", "${env.PROJECT_NAME}/${env.APP_NAME}", "${env.PROJECT_NAME}/${env.APP_NAME}:${appVersion}")
                                 def dc  = openshift.selector("dc", env.APP_NAME)
                                 dc.rollout().status()
                             }

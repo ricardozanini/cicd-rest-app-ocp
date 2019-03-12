@@ -14,8 +14,8 @@
     },
     {
       "name": "PROJECT_NAME",
-      "displayName": "Project Name",
-      "discription": "Name of the project where the application will reside.",
+      "displayName": "Base Project Name",
+      "discription": "Base name of the project where the application will reside. The template will handle the -dev -stg and -prd projects.",
       "value": "sample-rest-app",
       "required": true
     },
