@@ -46,12 +46,14 @@ pipeline {
                 script {
                     openshift.withCluster() {
                         openshift.withProject() {
-                            unstash name: "artifact"
-                            def buildSelector = openshift.selector("bc/${env.APP_NAME}-docker").startBuild("--from-file='app.jar'")
-                            //todo: throw expcetion if doesn't exist
-                            buildSelector.logs("-f")        
-                            def dc  = openshift.selector("dc", env.APP_NAME)
-                            dc.rollout().status()
+                            timeout(time:20, unit:'MINUTES') {
+                                unstash name: "artifact"
+                                def buildSelector = openshift.selector("bc/${env.APP_NAME}-docker").startBuild("--from-file='app.jar'")
+                                //todo: throw expcetion if doesn't exist
+                                buildSelector.logs("-f")        
+                                def dc  = openshift.selector("dc", env.APP_NAME)
+                                dc.rollout().status()
+                            }
                         }
                     }
                 }
