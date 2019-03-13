@@ -12,7 +12,7 @@ pipeline {
                             timeout(time:5, unit:'MINUTES') {
                                 def isTags = openshift.selector('istag', [ app: env.APP_NAME ]).objects()
                                 for (obj in isTags) {
-                                    tagsInput.put(obj.tag.name)
+                                    tagsInput.add(obj.tag.name)
                                 }
                             }
                         }
