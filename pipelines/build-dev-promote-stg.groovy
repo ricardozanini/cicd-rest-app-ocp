@@ -68,6 +68,24 @@ pipeline {
                 }
             }
         }
+        stage("Promote to Staging"){
+            agent any
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject("${env.PROJECT_NAME}-stg") {
+                            timeout(time:20, unit:'MINUTES') {    
+                                //from dev to stg
+                                openshift.tag("", "${env.PROJECT_NAME}-dev/${env.APP_NAME}:${appVersion}", "${env.APP_NAME}:latest")
+                                //the dc should trigger
+                                def dc  = openshift.selector("dc", env.APP_NAME)
+                                dc.rollout().status()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

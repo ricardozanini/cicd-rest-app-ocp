@@ -217,47 +217,6 @@
         "labels": {
           "app": "${NAME}"
         },
-        "name": "${NAME}-docker"
-      },
-      "spec": {
-        "output": {
-          "to": {
-            "kind": "ImageStreamTag",
-            "name": "${NAME}:latest"
-          }
-        },
-        "source": {
-          "dockerfile": "FROM registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift\nCOPY app.jar /deployments/app.jar",
-          "type": "Dockerfile"
-        },
-        "strategy": {
-          "dockerStrategy": {
-            "from": {
-              "kind": "ImageStreamTag",
-              "name": "openjdk18-openshift:latest",
-              "namespace" : "openshift"
-            }
-          },
-          "type": "Docker"
-        },
-        "triggers": [
-          {
-            "type": "ConfigChange"
-          },
-          {
-            "imageChange": {},
-            "type": "ImageChange"
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "build.openshift.io/v1",
-      "kind": "BuildConfig",
-      "metadata": {
-        "labels": {
-          "app": "${NAME}"
-        },
         "name": "${NAME}-pipeline"
       },
       "spec": {
