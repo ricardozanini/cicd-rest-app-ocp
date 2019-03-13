@@ -1,4 +1,5 @@
 def appVersion = ""
+def imageTag = ""
 
 pipeline {
     agent any
@@ -48,10 +49,11 @@ pipeline {
                         openshift.withProject("${env.PROJECT_NAME}-dev") {
                             timeout(time:20, unit:'MINUTES') {
                                 unstash name: "artifact"
+                                imageTag = "v${appVersion}"
                                 def buildSelector = openshift.selector("bc/${env.APP_NAME}-docker").startBuild("--from-file='app.jar'")
                                 //todo: throw expcetion if doesn't exist
                                 buildSelector.logs("-f")        
-                                openshift.tag("", "${env.APP_NAME}:latest", "${env.APP_NAME}:${appVersion}")
+                                openshift.tag("", "${env.APP_NAME}:latest", "${env.APP_NAME}:${imageTag}")
                                 def dc  = openshift.selector("dc", env.APP_NAME)
                                 dc.rollout().status()
                             }
@@ -68,7 +70,7 @@ pipeline {
                 }
             }
         }
-        stage("Promote to Staging"){
+        stage("Promote to Staging") {
             agent any
             steps {
                 script {
@@ -76,7 +78,8 @@ pipeline {
                         openshift.withProject("${env.PROJECT_NAME}-stg") {
                             timeout(time:20, unit:'MINUTES') {    
                                 //from dev to stg
-                                openshift.tag("", "${env.PROJECT_NAME}-dev/${env.APP_NAME}:${appVersion}", "${env.APP_NAME}:latest")
+                                openshift.tag("", "${env.PROJECT_NAME}-dev/${env.APP_NAME}:${imageTag}", "${env.APP_NAME}:${imageTag}")
+                                openshift.tag("", "${env.APP_NAME}:${imageTag}", "${env.APP_NAME}:latest")
                                 //the dc should trigger
                                 def dc  = openshift.selector("dc", env.APP_NAME)
                                 dc.rollout().status()

@@ -174,12 +174,6 @@
                   "successThreshold": 1,
                   "timeoutSeconds": 2
                 },
-                "resources": {
-                  "limits": {
-                    "cpu": "500m",
-                    "memory": "256Mi"
-                  }
-                },
                 "terminationMessagePath": "/dev/termination-log",
                 "terminationMessagePolicy": "File"
               }
