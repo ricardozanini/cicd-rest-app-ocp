@@ -1,4 +1,5 @@
 def tagVersion = ""
+def tagsInput = []
 
 pipeline {
     agent any
@@ -11,9 +12,8 @@ pipeline {
                             timeout(time:5, unit:'MINUTES') {
                                 def isTags = openshift.selector('istag', [ app: env.APP_NAME ]).objects()
                                 for (obj in isTags) {
-                                    echo "tag name: ${obj.tag.name}"
+                                    tagsInput.put(obj.tag.name)
                                 }
-                                
                             }
                         }
                     }
@@ -24,7 +24,7 @@ pipeline {
             agent none
             steps {
                 timeout(time:30, unit:'MINUTES') {
-                    input (id: 'inputTags', message: 'Do I have your approval to promote this image to stage?',  parameters: [ [$class: 'ChoiceParameterDefinition', choices: ['1', '2'], description: 'Choose the tag to be promoted', name: 'tag'] ])
+                    tagVersion = input (id: 'inputTags', message: 'Do I have your approval to promote this image to stage?',  parameters: [ [$class: 'ChoiceParameterDefinition', choices: tagsInput, description: 'Choose the tag to be promoted', name: 'tag'] ])
                 }
             }
         }
