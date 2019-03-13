@@ -21,7 +21,7 @@ pipeline {
             }
         }
         stage ("Promote to Production") {
-            
+            steps {}
         }
     }
 }   
