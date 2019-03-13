@@ -9,7 +9,7 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.PROJECT_NAME}-stg") {
                             timeout(time:5, unit:'MINUTES') {
-                                def isTags = openshift.selector('istag', [env.APP_NAME]).objects().items()
+                                def isTags = openshift.selector('istag', app: [env.APP_NAME]).objects().items()
                                 for (tag in isTags) {
                                     echo "tag name: ${tag.name}"
                                 }
