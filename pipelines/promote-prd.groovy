@@ -10,9 +10,8 @@ pipeline {
                         openshift.withProject("${env.PROJECT_NAME}-stg") {
                             timeout(time:5, unit:'MINUTES') {
                                 def isTags = openshift.selector('istag', [ app: env.APP_NAME ]).objects()
-                                echo isTags
-                                for (tag in isTags) {
-                                    echo "tag name: ${tag.name}"
+                                for (obj in isTags) {
+                                    echo "tag name: ${obj.tag.name}"
                                 }
                                 
                             }
