@@ -8,7 +8,7 @@ This is a sample project that can be used in demos and/or as reference to build 
 
 ### Pipelines
 
-#### Devlopment
+#### Development
 
 #### Staging
 
