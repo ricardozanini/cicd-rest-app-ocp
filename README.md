@@ -4,15 +4,27 @@ This is a sample project that can be used in demos and/or as reference to build 
 
 ### How to use
 
+TBD
+
 ### The Sample REST Application
+
+TBD
 
 ### Pipelines
 
+TBD
+
 #### Development
+
+TBD
 
 #### Staging
 
+TBD
+
 #### Production
+
+TBD
 
 ### References
 
@@ -24,3 +36,4 @@ This is a sample project that can be used in demos and/or as reference to build 
 - [OpenShift Docs - Pipeline Builds](https://docs.openshift.com/container-platform/3.11/dev_guide/dev_tutorials/openshift_pipeline.html)
 - [OpenShift Docs - Cross Project Access](https://docs.openshift.com/container-platform/3.11/using_images/other_images/jenkins.html#jenkins-cross-project-access)
 - [OpenShift Docs - Configuring Pipeline Execution](https://docs.openshift.com/container-platform/3.11/install_config/configuring_pipeline_execution.html#overview)
+- [Promoting Applications Across Environments](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/promoting_applications.html)
