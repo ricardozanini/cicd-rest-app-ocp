@@ -21,7 +21,12 @@ pipeline {
             }
         }
         stage ("Promote to Production") {
-            steps {}
+            agent none
+            steps {
+                timeout(time:30, unit:'MINUTES') {
+                    input (id: 'inputTags', message: 'Do I have your approval to promote this image to stage?',  parameters: [ [$class: 'ChoiceParameterDefinition', choices: ['1', '2'], description: 'Choose the tag to be promoted', name: 'tag'] ])
+                }
+            }
         }
     }
 }   
