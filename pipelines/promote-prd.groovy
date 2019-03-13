@@ -24,7 +24,10 @@ pipeline {
             agent none
             steps {
                 timeout(time:30, unit:'MINUTES') {
-                    tagVersion = input (id: 'inputTags', message: 'Do I have your approval to promote this image to stage?',  parameters: [ [$class: 'ChoiceParameterDefinition', choices: tagsInput, description: 'Choose the tag to be promoted', name: 'tag'] ])
+                    script {
+                        tagVersion = input (id: 'inputTags', message: 'Do I have your approval to promote this image to stage?',  parameters: [ [$class: 'ChoiceParameterDefinition', choices: tagsInput, description: 'Choose the tag to be promoted', name: 'tag'] ])
+                        echo "The version choosed is ${tagVersion}"
+                    }
                 }
             }
         }
