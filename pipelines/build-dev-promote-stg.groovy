@@ -54,6 +54,9 @@ pipeline {
                                 //todo: throw expcetion if doesn't exist
                                 buildSelector.logs("-f")
                                 def newIsTag = openshift.selector("istag", "${env.APP_NAME}:latest").object()
+                                if (!newIsTag.metadata.annotations) {
+                                    newIsTag.metadata.annotations = [:]
+                                }
                                 newIsTag.metadata.annotations['org.samples.cicd.build.commit'] = env.GIT_COMMIT
                                 newIsTag.metadata.annotations['org.samples.cicd.build.committer_name'] = env.GIT_COMMITTER_NAME
                                 newIsTag.metadata.annotations['org.samples.cicd.build.committer_email'] = env.GIT_COMMITTER_EMAIL
