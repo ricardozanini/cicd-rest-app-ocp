@@ -52,7 +52,14 @@ pipeline {
                                 imageTag = "v${appVersion}"
                                 def buildSelector = openshift.selector("bc/${env.APP_NAME}-docker").startBuild("--from-file='app.jar'")
                                 //todo: throw expcetion if doesn't exist
-                                buildSelector.logs("-f")        
+                                buildSelector.logs("-f")
+                                def newIsTag = openshift.selector("istag", "${env.APP_NAME}:latest").object()
+                                newIsTag.metadata.annotations['org.samples.cicd.build.commit'] = env.GIT_COMMIT
+                                newIsTag.metadata.annotations['org.samples.cicd.build.committer_name'] = env.GIT_COMMITTER_NAME
+                                newIsTag.metadata.annotations['org.samples.cicd.build.committer_email'] = env.GIT_COMMITTER_EMAIL
+                                newIsTag.metadata.annotations['org.samples.cicd.build.author'] = 'Jenkins'
+                                newIsTag.metadata.annotations['org.samples.cicd.build.version'] = appVersion
+                                openshift.apply(newIsTag)
                                 openshift.tag("", "${env.APP_NAME}:latest", "${env.APP_NAME}:${imageTag}")
                                 def dc  = openshift.selector("dc", env.APP_NAME)
                                 dc.rollout().status()
