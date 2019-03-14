@@ -38,7 +38,7 @@
           "dockerStrategy": {
             "from": {
               "kind": "ImageStreamTag",
-              "name": "openjdk18-openshift:latest",
+              "name": "openjdk18-openshift:1.4",
               "namespace" : "openshift"
             }
           },
