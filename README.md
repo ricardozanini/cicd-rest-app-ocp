@@ -1,8 +1,8 @@
-## CI/CD Sample for OpenShift with Jenkins
+# CI/CD Sample for OpenShift with Jenkins
 
 This is a sample project that can be used in demos and/or as reference to build a CI/CD implementation using Jenkins and OpenShift to deploy a Spring Boot REST application. Use at your own discretion.
 
-### How to use
+## How to use
 
 **1)** (Optional) [Deactivate the Jenkins auto-provision](https://docs.openshift.com/container-platform/3.11/install_config/configuring_pipeline_execution.html#overview) on your `master-config.yaml` file.
 
@@ -23,37 +23,79 @@ If you're using Minishift, this file is under those three directories:
 
 Change all of them and restart your Minishift (or the atomic service if on a cluster).  
 
-**2)** Install Jenkins in your cluster. Follow the directions on the OpenShift documentation by running the `jenkins-ephemeral` template.
+**2)** Install Jenkins in your cluster. [Follow the directions on the OpenShift documentation](https://docs.openshift.com/container-platform/3.11/dev_guide/dev_tutorials/openshift_pipeline.html#creating-the-jenkins-master) by running the `jenkins-persistent` (or `jenkins-ephemeral`) template:
 
-**3)** The `jenkins-ephemeral` won't persist your data, so attach a Volume to it pointing to `/var/home/jenkins`. 
+```shell
+$ oc project <project_name> 
+$ oc new-app jenkins-persistent
+```
+
+*Keep in mind that the `jenkins-ephemeral` won't persist your configuration between pod restarts.*
 
 **4)** After cloning this repo, run the script `install.sh` logged as a `cluster-admin` (hint: `oc login -u system:admin`) to create the projects on your OpenShift cluster for this demo. It'll create three projects: `sample-rest-app-dev`, `sample-rest-app-stg` and `sample-rest-app-prd` with the proper infrastructure.
 
-**5)** Log on your web console, go to the `sample-rest-app-dev`, Builds, Pipelines and hit the **Start Pipeline** button. The application should be deployed on the devlopement environment. After promoting it do the same at the `sample-rest-app-stg` to have the application promoted to production. :)
+**5)** On the Jenkins web console, go to Manage Jenkins, Configure System and set this configurations:
 
-### Architecture
+a. In the **OpenShift Jenkins Sync** section, Namespace field add `sample-rest-app-dev sample-rest-app-stg`. This will keep the pipelines of your new project in sync with the Jenkins installation.
 
-### The Sample REST Application
+b. In the **Kubernetes Template** section, add a Persistent Volume Claim to the maven agent pointing to `/home/jenkins/.m2`. This way you'll keep your build java libraries persisted accross pipelines executions.
+
+c. In the same section, in the field **Time in minutes to retain slave when idle**, fill with `1`. The container agent will stay in idle for 1 minute waiting for new pipeline tasks. This is needed because our pipelines set an agent at each step, so reusing agent containers is a rule of thumb.
+
+**6)** Log on your web console, go to the `sample-rest-app-dev`, Builds, Pipelines and hit the **Start Pipeline** button. The application should be deployed on the devlopement environment. After promoting it do the same at the `sample-rest-app-stg` to have the application promoted to production. :)
+
+## Architecture
+
+This is a raw draw of this architecture.
+
+```
+            +-------------------------------------------------------------------------------------------------+
+            |                                                                                                 |
+            |                                               Registry                                          |
+            |                                                                                                 |
+            |                                                                                                 |
+            |                 app:v1.0-10      app:v1.0-10      app:v1.0-10        app:v1.0       app:latest  |
+            |                                                                                                 |
+            +----------------------+----------------+----------------+----------------+----------------+------+
+                                   ^                |                |                ^                |
+                                   |                |                |                |                |
+                                   |                v                v                |                v
+            +------------+   +-----+------+   +-----+------+   +-----+------+   +-----+------+   +-----+------+
+            |            |   |            |   |            |   |            |   |            |   |            |
+            |            |   |            |   |            |   |            |   |            |   |            |
++---------> |            |   |            |   |            |   |            |   |            |   |            |
+            |   Build    |   |    Push    |   |  Dev Test  |   |  QA Test   |   | Final Tag  |   |   Deploy   |
+Code Change |            |   |            |   |            |   |            |   |            |   |            |
+            |            |   |            |   |            |   |            |   |            |   |            |
+            +------------+   +------------+   +------------+   +------------+   +------------+   +------------+
+                                                               |            |
+                                                               |            |
+                              Development                      |  Staging   |              Production
+                                                               |            |
+                                                               +            +
+```
+
+## The Sample REST Application
 
 TBD
 
-### Pipelines
+## Pipelines
 
 TBD
 
-#### Development
+### Development
 
 TBD
 
-#### Staging
+### Staging
 
 TBD
 
-#### Production
+### Production
 
 TBD
 
-### References
+## References
 
 - [Application CI/CD on OpenShift Container Platform with Jenkins](https://access.redhat.com/documentation/en-us/reference_architectures/2017/html-single/application_cicd_on_openshift_container_platform_with_jenkins/index)
 - [OpenShift Docs - Build Inputs](https://docs.openshift.com/container-platform/3.11/dev_guide/builds/build_inputs.html#binary-source)
