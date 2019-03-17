@@ -41,11 +41,11 @@ setup_application()
     oc project $project
     oc process -f openshift/sample-rest-app-infrastructure.json -p NAME=$SAMPLE_PROJECT -p JENKINS_PIPELINE=$pipeline | oc create -f -
 
-    if [ env = "stg" ]; then
+    if [ "$env" = "stg" ]; then
         oc delete bc/"${SAMPLE_PROJECT}-docker"
     fi
 
-    if [ env = "prd" ]; then
+    if [ "$env" = "prd" ]; then
         oc delete bc --all
     fi
 }
