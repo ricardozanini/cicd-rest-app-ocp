@@ -88,7 +88,11 @@ In a nutshell, there are two pipelines:
 The sample application is implemented with Spring Boot framework that publishes the `/info` REST endpoint. By calling this endpoint someone could inspect some internals of the app like the published version and the pod where it's running:
 
 ```
-
+{
+  "version": "1.0-1",
+  "podName": "sample-rest-app-1-sv7gj",
+  "username": "jboss"
+}
 ```
 
 ## Known Issues
