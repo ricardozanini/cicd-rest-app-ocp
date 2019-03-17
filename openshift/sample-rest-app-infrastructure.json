@@ -45,7 +45,7 @@
       "displayName": "Jenkins Pipeline to Run",
       "discription": "Jenkins Pipeline (relative to the repo root dir) that will run under this project context. Defaults to build the app from the scratch.",
       "value": "pipelines/build-dev-promote-stg.groovy",
-      "required": true
+      "required": false
     }
   ],
   "objects": [

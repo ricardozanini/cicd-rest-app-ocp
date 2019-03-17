@@ -32,7 +32,7 @@ $ oc new-app jenkins-persistent
 
 *Keep in mind that the `jenkins-ephemeral` won't persist your configuration between pod restarts.*
 
-**4)** After cloning this repo, run the script `install.sh` logged as a `cluster-admin` (hint: `oc login -u system:admin`) to create the projects on your OpenShift cluster for this demo. It'll create three projects: `sample-rest-app-dev`, `sample-rest-app-stg` and `sample-rest-app-prd` with the proper infrastructure.
+**4)** After cloning this repo, run the script `install.sh` logged as a `cluster-admin` (hint: `oc login -u system:admin`) to create the projects and the infrastrucuture for this demo on your OpenShift cluster. It'll create three projects: `sample-rest-app-dev`, `sample-rest-app-stg` and `sample-rest-app-prd` with the proper infrastructure.
 
 **5)** On the Jenkins web console, go to Manage Jenkins, Configure System and set this configurations:
 
@@ -44,56 +44,56 @@ c. In the same section, in the field **Time in minutes to retain slave when idle
 
 **6)** Log on your web console, go to the `sample-rest-app-dev`, Builds, Pipelines and hit the **Start Pipeline** button. The application should be deployed on the devlopement environment. After promoting it do the same at the `sample-rest-app-stg` to have the application promoted to production. :)
 
-## Architecture
+## CI/CD Flow
 
-This is a raw draw of this architecture.
+The schema bellow illustrates the pipelines flow accross all the three environments (devlopment, staging and production)
 
 ```
-            +-------------------------------------------------------------------------------------------------+
-            |                                                                                                 |
-            |                                               Registry                                          |
-            |                                                                                                 |
-            |                                                                                                 |
-            |                 app:v1.0-10      app:v1.0-10      app:v1.0-10        app:v1.0       app:latest  |
-            |                                                                                                 |
-            +----------------------+----------------+----------------+----------------+----------------+------+
-                                   ^                |                |                ^                |
-                                   |                |                |                |                |
-                                   |                v                v                |                v
-            +------------+   +-----+------+   +-----+------+   +-----+------+   +-----+------+   +-----+------+
-            |            |   |            |   |            |   |            |   |            |   |            |
-            |            |   |            |   |            |   |            |   |            |   |            |
-+---------> |            |   |            |   |            |   |            |   |            |   |            |
-            |   Build    |   |    Push    |   |  Dev Test  |   |  QA Test   |   | Final Tag  |   |   Deploy   |
-Code Change |            |   |            |   |            |   |            |   |            |   |            |
-            |            |   |            |   |            |   |            |   |            |   |            |
-            +------------+   +------------+   +------------+   +------------+   +------------+   +------------+
-                                                               |            |
-                                                               |            |
-                              Development                      |  Staging   |              Production
-                                                               |            |
-                                                               +            +
+                                                                                                   +
+                                                                                                   |
+Development                                                                                        |  Staging
+                                                                                                   |
++--------------------------------------------------------------------------------------------------+----------->
+
++-------------+ +-------+ +-----------+ +-------------+ +-------------+ +-----------+ +----------+ +-----------+
+|             | |       | |           | |             | |             | |           | |          | |           |
+|     New     | |       | |           | | Integration | |    Build    | |           | |          | |  Staging  |
+|             | | Build | | Unit Test | |             | |             | | Tag Image | | Approval | |           |
+| Version Set | |       | |           | |    Test     | |    Image    | |           | |          | | Promotion |
+|             | |       | |           | |             | |             | |           | |          | |           |
++-------------+ +-------+ +-----------+ +-------------+ +-------------+ +-----------+ +----------+ +-----------+
+
+                 +
+                 |
+Staging          |  Production
+                 |
++----------------+--------------------------->
+
++-------------+  +-----------+  +------------+
+|             |  |           |  |            |
+| Elect Image |  | Tag Final |  | Production |
+|             |  |           |  |            |
+|   Version   |  |  Version  |  | Promotion  |
+|             |  |           |  |            |
++-------------+  +-----------+  +------------+
 ```
+
+In a nutshell, there are two pipelines:
+
+- [`build-dev-promote-stg.groovy`](/pipelines/build-dev-promote-stg.groovy): deployed on the development project. It's responsible for generate a new application build and promote it to staging after approval
+- [`promote-prd.groovy`](/pipelines/promote-prd.groovy): deployed on the staging project. It reads the images tag from the repository and handle to the user to elect one release candidate to promote to production. The promote process is a simple image tag on the target environment
 
 ## The Sample REST Application
 
-TBD
+The sample application is implemented with Spring Boot framework that publishes the `/info` REST endpoint. By calling this endpoint someone could inspect some internals of the app like the published version and the pod where it's running:
 
-## Pipelines
+```
 
-TBD
+```
 
-### Development
+## Known Issues
 
-TBD
-
-### Staging
-
-TBD
-
-### Production
-
-TBD
+- The Jenkins user must have `cluster-admin` privileges to be able to tag the images accross projects. The ideal is to create a cluster role that specifies the verbs and resources that the Jenkins user should have to run the pipelines. Contributions are welcome. :)
 
 ## References
 

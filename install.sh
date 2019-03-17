@@ -16,17 +16,19 @@ validate()
 # create the applications, here we need three envs to promote the images between them
 create_projects() 
 {
-    echo "oc new-project ${SAMPLE_PROJECT}-dev"
-    echo "oc new-project ${SAMPLE_PROJECT}-stg"
-    echo "oc new-project ${SAMPLE_PROJECT}-prd"
+    echo ">>> Creating projects"
+    oc new-project "${SAMPLE_PROJECT}-dev"
+    oc new-project "${SAMPLE_PROJECT}-stg"
+    oc new-project "${SAMPLE_PROJECT}-prd"
 }
 
 add_jenkins_permissions()
 {
+    echo ">>> Adding specific permissions to the system:serviceaccount:${CICD_PROJECT}:jenkins user"
     # for image pulling
     #oc adm policy add-cluster-role-to-user system:image-puller system:serviceaccount:cicd:jenkins
     # TODO: let the jenkins be the admin until we figure out what roles it should have to be able to perform everything it needs.
-    echo "oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:${CICD_PROJECT}:jenkins"
+    oc adm policy add-cluster-role-to-user cluster-admin "system:serviceaccount:${CICD_PROJECT}:jenkins"
 }
 
 setup_application() 
@@ -35,15 +37,16 @@ setup_application()
     pipeline=$2
     project="${SAMPLE_PROJECT}-${env}"
 
-    echo "oc project ${project}"
-    echo "oc process -f openshift/sample-rest-app-infrastructure.json -p NAME=\"${SAMPLE_PROJECT}\" -p JENKINS_PIPELINE=\"${pipeline}\" | oc create -f -"
+    echo ">>> Creating the infrastructure for the project ${project}."
+    oc project $project
+    oc process -f openshift/sample-rest-app-infrastructure.json -p NAME=$SAMPLE_PROJECT -p JENKINS_PIPELINE=$pipeline | oc create -f -
 
     if [ env = "stg" ]; then
-        echo "oc delete bc/${SAMPLE_PROJECT}-docker"
+        oc delete bc/"${SAMPLE_PROJECT}-docker"
     fi
 
     if [ env = "prd" ]; then
-        echo "oc delete bc --all"
+        oc delete bc --all
     fi
 }
 
